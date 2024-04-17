@@ -32,7 +32,7 @@ __interrupt_vec(WDT_VECTOR) WDT()	/* 250 interrupts/sec */
 
   // measure a second
   secondCount ++;
-  if (secondCount >= 250) {  // once each second
+  if (secondCount >= 100) {  // once each second
     secondCount = 0;
     blinkLimit ++;	     // reduce duty cycle
     if (blinkLimit >= 8)     // but don't let duty cycle go below 1/7.
