@@ -65,33 +65,51 @@ vwitch_interrupt_handler()
 }
 
 int secondCount = 0;
-
-
-
+int firstCount = 0;
+int blinkLimit =5;
+int thirdCount = 0;
 void
 
 __interrupt_vec(WDT_VECTOR) WDT()/* 250 interrupts/sec */
 
 {
+  firstCount++;
+ 
 
-  secondCount ++;
-
-  if (secondCount >= 250 && secondCount < 1250) { /* once each sec... */
-       
+  if (firstCount >= 250 && firstCount < 1250) { /* once each sec... */
+    secondCount++;   
     //secondCount = 0;/* reset count */
     P1OUT &= ~LED_GREEN;
     P1OUT |= LED_RED;/* toggle green LED */
 
-    for(int i = 0; i == 5; i++) P1OUT &= ~LED_RED;
-    //P1OUT ^= LED_GREEN;/* toggle red LED */
+    if(secondCount >= blinkLimit){
+      secondCount = 0;
+      P1OUT |= LED_RED;
+    }else{
+      P1OUT &= ~LED_RED;
+    }
   }
-  if (secondCount >= 1250){
+  if (firstCount >= 1250){
 
-    secondCount = 0;
+    firstCount = 0;
     P1OUT &= ~LED_RED;
     P1OUT ^= LED_GREEN;   //Toogle red every 500 interupts/sec
 
       
   }
+  thirdCount ++;
+
+  if (thirdCount >= 250) {  // once each second
+
+    thirdCount = 0;
+
+    blinkLimit ++;     // reduce duty cycle
+
+    if (blinkLimit >= 8)     // but don't let duty cycle go below 1/7.
+
+      blinkLimit = 0;
+
+  }
+
 
 } 
